@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"
+        android:hint="您更新后的信息"
+        android:textSize="18dp"
+        android:id="@+id/show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <LinearLayout
+        android:layout_marginTop="330dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="246dp"
+            android:layout_height="match_parent"
+            android:cursorVisible="false"
+            android:hint="请输入手机号并保存" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="245dp"
+            android:layout_height="match_parent"
+            android:cursorVisible="false"
+            android:ems="10"
+            android:hint="输入邮箱并保存"
+            android:inputType="textEmailAddress" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/submit"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:background="@drawable/timg"
+            android:text="保存"/>
+
+
+        <Space
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/clear"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/timg"
+            android:text="清除" />
+
+        <Space
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/look"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/timg"
+            android:text="查看" />
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

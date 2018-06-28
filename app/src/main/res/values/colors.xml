@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#d48ca1ac</color>
+    <color name="colorPrimaryDark">#030200</color>
+    <color name="colorAccent">#cc9a00</color>
+
+
+    <color name="window_background">#ffffff</color>
+    <color name="window_gray">#ececec</color>
+
+    <color name="text_brack">#0d0d0d</color>
+    <color name="text_gray01">#585858</color>
+    <color name="text_gray02">#939393</color>
+    <color name="colorTable">#A2D8FF</color>
+    <color name="colorTexttitle">#000000</color>
+    <color name="red_ff4a57">#ff4a57</color>
+    <color name="colorbg">#F8F8F8</color>
+    <color name="white">#ffffff</color>
+    <color name="text_gray">#c8c8c8</color>
+    <color name="divider_normal">#f0f0f0</color>
+    <color name="border">#D4D4D4</color>
+    <color name="vd_text_gray">#626262</color>
+
+    <!--正文文字颜色-->
+    <color name="colorContent">#ff333333</color>
+    <!--首页分割线-->
+    <color name="colorHomeLine">#D4D4D4</color>
+</resources>

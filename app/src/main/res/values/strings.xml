@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">掠影</string>
+
+    <string name="close">close</string>
+    <string name="open">open</string>
+    <string name="movie_num">共有%1$s部影片</string>
+    <string name="movie_time">%1$s-%2$s-%3$s</string>
+    <string name="text">默认
+        </string>
+</resources>
