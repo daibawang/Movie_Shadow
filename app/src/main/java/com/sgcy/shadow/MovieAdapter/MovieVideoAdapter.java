@@ -4,15 +4,18 @@ package com.sgcy.shadow.MovieAdapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sgcy.shadow.MovieBean.Video;
 import com.sgcy.shadow.MovieView.ASmartimgView;
 import com.sgcy.shadow.R;
+import com.sgcy.shadow.app.MainActivity;
 
 import java.util.List;
 
@@ -76,7 +79,11 @@ public class MovieVideoAdapter  extends BaseAdapter {
             holder=(ViewHolder)view.getTag();  //重新获取ViewHolder
         }
         holder.vd_img.setId_(position);
-        holder.vd_img.loadImageFromNet(video.getImage());
+        if(video.getImage()==null){
+            Log.i("diu", "getView: "+"丢了");
+        }else {
+            holder.vd_img.loadImageFromNet(video.getImage());
+        }
         holder.vd_name.setText(video.getTitle());
         int n=video.getLength()/60;
         String time ="0"+video.getLength()/60+":"+(video.getLength()-n*60);

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +19,9 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.lcodecore.extextview.ExpandTextView;
+import com.sgcy.shadow.MovieAdapter.MovieCommentAdapter;
 import com.sgcy.shadow.MovieBean.Actors;
+import com.sgcy.shadow.MovieBean.Comments;
 import com.sgcy.shadow.MovieBean.Director;
 import com.sgcy.shadow.MovieBean.MovieCollection;
 import com.sgcy.shadow.MovieBean.Other;
@@ -34,6 +37,7 @@ import com.zhy.http.okhttp.callback.Callback;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.litepal.LitePal;
+import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +73,7 @@ public class MovieDetailsActiyity extends AppCompatActivity {
     private RecyclerView recyclerView_photo;
     private MoviePhotoListAdapter photoListAdapter;
     private LinearLayoutManager linearLayoutManager2;
+    private LinearLayoutManager linearLayoutManager3;
     private String date;
     //收藏想看
     private ImageView star;
@@ -84,9 +89,11 @@ public class MovieDetailsActiyity extends AppCompatActivity {
     private LinearLayout changelayout2;
     private ContentValues values = new ContentValues();
     private ContentValues values2 = new ContentValues();
+
+    private MovieCommentAdapter movieCommentAdapter;
+    private List<Comments> commentsList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__detail);
         ActionBar actionBar = getSupportActionBar();
@@ -114,26 +121,34 @@ public class MovieDetailsActiyity extends AppCompatActivity {
 
         Log.i("movieid", "onCreate:这是" + movie_id);
          m = movie_id + "";
-
-        //loadother("https://ticket-api-m.mtime.cn/movie/detail.api?locationId=290&movieId=125805");
         int movie = LitePal.where("movieId==?", m).count(Other.class);
+        int com=LitePal.where("movieid==?",m).count(Comments.class);
+
         Log.i("movie", "onCreate: " + movie);
-        if (movie == 0) {
+        if (movie == 0||com==0) {
             loadactors("https://ticket-api-m.mtime.cn/movie/detail.api?locationId=290&movieId=" + movie_id);
+            loadComments("https://api-m.mtime.cn/Showtime/HotMovieComments.api?pageIndex=1&movieId="+movie_id);
             Log.i("获取", "onCreate: " + "获取");
-            Log.i("zsszzzzzzzzzzzz", "onCreate: " + otherData);
+
+//            Log.i("zsszzzzzzzzzzzz", "onCreate: " + commentList);
         } else {
             actorsDataList = LitePal.where("moviedid==?", m).find(Actors.class);
             directorData = LitePal.where("moviedid==?", m).find(Director.class).get(0);
             stageImgsList = LitePal.where("moviedid==?", m).find(StageImg.class);
             otherData = LitePal.where("movieid==?", m).find(Other.class).get(0);
             videoData = LitePal.where("moviedid==?", m).find(Video.class).get(0);
+            commentsList=LitePal.where("movieid=?",m).find(Comments.class);
             Log.i("直接去", "onCreate: " + "直接去");
             BindData(otherData,actorsDataList,stageImgsList,videoData);
+            BindData2(commentsList);
         }
 
-
     }
+
+    private void loadComments(String path) {
+        OkHttpUtils.get().url(path).build().execute(new MyCallback5());
+    }
+
 
     private void BindData(final Other otherData, List<Actors> actorsDataList, List<StageImg> stageImgsList, final Video videoData) {
         //绑定数据
@@ -229,7 +244,6 @@ public class MovieDetailsActiyity extends AppCompatActivity {
         });
     }
 
-
     private void loadactors(String path) {
         OkHttpUtils.get().url(path).build().execute(new MyCallback1());
     }
@@ -300,4 +314,59 @@ public class MovieDetailsActiyity extends AppCompatActivity {
             BindData((Other) map.get("otherData"),(List<Actors>)map.get("actorsDataList"),(List<StageImg>)map.get("stageImgsList"),(Video) map.get("videoData"));
         }
     }
+
+
+
+    private class MyCallback5 extends Callback <List<Comments>> {
+        @Override
+        public List<Comments> parseNetworkResponse(Response response, int id) throws Exception {
+            String content = response.body().string();
+            JSONObject jsonObject = new JSONObject(content);
+            List<Comments> comments = new ArrayList<>();
+            JSONObject jsondata = (JSONObject) jsonObject.get("data");
+            JSONArray ctsTson = (JSONArray)jsondata.get("cts");
+
+            Log.i("jaaaaaaaaaaaaa", "parseNetworkResponse: "+ctsTson);
+
+            for(int i = 0;i<ctsTson.length();i++){
+
+                JSONObject comJson = (JSONObject) ctsTson.getJSONObject(i);
+                Comments comments1 = new Comments();
+                comments1.setMovieid(movie_id);
+                comments1.setCa(comJson.getString("ca"));
+                comments1.setCaimg(comJson.getString("caimg"));
+                comments1.setCal(comJson.getString("cal"));
+                comments1.setCd(comJson.getInt("cd"));
+                comments1.setCe(comJson.getString("ce"));
+                comments1.setCr((int)comJson.getDouble("cr"));
+                comments1.setHot(comJson.getBoolean("isHot"));
+                comments1.save();
+                comments.add(comments1);
+            }
+            return comments;
+        }
+
+        @Override
+        public void onError(Call call, Exception e, int id) {
+
+        }
+
+        @Override
+        public void onResponse(List<Comments> response, int id) {
+            BindData2(response);
+        }
+    }
+
+    private void BindData2(List<Comments> response) {
+        linearLayoutManager3 = new LinearLayoutManager(this);
+        linearLayoutManager3.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_movie_video_comment);
+        DividerItemDecoration decoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+         movieCommentAdapter = new MovieCommentAdapter(this,response);
+         recyclerView.setLayoutManager(linearLayoutManager3);
+         recyclerView.addItemDecoration(decoration);
+         recyclerView.setAdapter(movieCommentAdapter);
+    }
+
+
 }

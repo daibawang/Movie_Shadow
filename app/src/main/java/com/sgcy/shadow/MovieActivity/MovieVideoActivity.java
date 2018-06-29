@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.sgcy.shadow.MovieBean.Director;
 import com.sgcy.shadow.MovieBean.Video;
 import com.sgcy.shadow.MovieAdapter.MovieVideoAdapter;
 import com.sgcy.shadow.R;
@@ -48,7 +49,7 @@ public class MovieVideoActivity extends AppCompatActivity {
     private TextView vd_number;
     private ListView ls;
     private MovieVideoAdapter movieVideoAdapter;
-
+    private String m;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,29 +68,25 @@ public class MovieVideoActivity extends AppCompatActivity {
         videoId=intent.getIntExtra("videoId",0);
         Log.i("movie_name", "onCreate: "+movie_name);
         Log.i("time", "onCreate: "+movie_date);
-        jcVideoPlayerStandard= (JCVideoPlayerStandard) findViewById(R.id.video_view);
-        jcVideoPlayerStandard.setUp(video_url,jcVideoPlayerStandard.SCREEN_LAYOUT_NORMAL,video_title);
         vd_name= (TextView) findViewById(R.id.vd_movie_name);
         vd_time= (TextView) findViewById(R.id.movie_time);
         vd_number= (TextView) findViewById(R.id.vd_number);
         ls = (ListView) findViewById(R.id.vd_videolist);
         vd_name.setText(movie_name);
         vd_time.setText(movie_date+" 大陆上映");
-
-        Glide.with(this).load(video_img).into(jcVideoPlayerStandard.thumbImageView);
-        String m = movieid+"";
+        //删除异常
+        LitePal.deleteAll(Video.class, "length = ? and moviedid = ?", "0","movieid");
+         m = movieid+"";
         int isexist = LitePal.where("moviedid==?",m).count(Video.class);
-        if(isexist<2){
+        if(isexist==1){
             loadVideo("https://api-m.mtime.cn/Movie/Video.api?pageIndex=1&movieId="+movieid);
             Log.i("获取", "onCreate: " + "获取");
             Log.i("zsszzzzzzzzzzzz", "onCreate: " + videoData);
         }else{
             //从数据库中取
             videoList = LitePal.where("moviedid==?",m).find(Video.class);
-
-            //删除传递过来不同数据源的那一条信息
-            LitePal.deleteAll(Video.class, "length = ? and moviedid = ?", "0","movieid");
             vd_number.setText("("+videoList.size()+")");
+            loadvd(videoList);
             BindData(videoList);
             Log.i("直接取", "onCreate: " + "直接取");
         }
@@ -98,6 +95,7 @@ public class MovieVideoActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Video video = videoList.get(position);
+
                 Toast.makeText(MovieVideoActivity.this,video.getTitle(),Toast.LENGTH_SHORT).show();
                 movieVideoAdapter.setSelectedPosition(position);
                 movieVideoAdapter.notifyDataSetInvalidated();//刷新适配器
@@ -106,6 +104,13 @@ public class MovieVideoActivity extends AppCompatActivity {
                 Glide.with(MovieVideoActivity.this).load(videoList.get(position).getImage()).into(jcVideoPlayerStandard.thumbImageView);
             }
         });
+    }
+    private void loadvd(List<Video> videoList){
+        Video video = new Video();
+        video=LitePal.where("moviedid==?", m).find(Video.class).get(0);
+        jcVideoPlayerStandard= (JCVideoPlayerStandard) findViewById(R.id.video_view);
+        jcVideoPlayerStandard.setUp(video.getHightUrl(),jcVideoPlayerStandard.SCREEN_LAYOUT_NORMAL,video.getTitle());
+        Glide.with(this).load(video.getImage()).into(jcVideoPlayerStandard.thumbImageView);
     }
     private void loadVideo(String path) {
         OkHttpUtils.get().url(path).build().execute(new MyCallback3());
@@ -133,7 +138,8 @@ public class MovieVideoActivity extends AppCompatActivity {
         }
         @Override
         public void onResponse(List<Video> response, int id) {
-           BindData(response);
+            loadvd(response);
+            BindData(response);
         }
     }
 

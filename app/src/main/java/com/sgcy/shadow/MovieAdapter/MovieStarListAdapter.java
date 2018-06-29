@@ -2,6 +2,7 @@ package com.sgcy.shadow.MovieAdapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class MovieStarListAdapter extends RecyclerView.Adapter<MovieStarListAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         return new ViewHolder(mInfalter.inflate(R.layout.item_movie_director,parent,false));
     }
     //绑定数据
@@ -45,6 +47,7 @@ public class MovieStarListAdapter extends RecyclerView.Adapter<MovieStarListAdap
         holder.truename.setText(actors.getName()+"\n"+actors.getNameEn());
         holder.photo.setId_(position);
         holder.photo.loadImageFromNet(actors.getImg());
+        final Actors actors1 = this.actorsList.get(position);
     }
 
     @Override
@@ -52,7 +55,7 @@ public class MovieStarListAdapter extends RecyclerView.Adapter<MovieStarListAdap
         return this.actorsList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         ASmartimgView photo;
         TextView truename;
         TextView rolename;

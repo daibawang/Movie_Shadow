@@ -33,6 +33,9 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import okhttp3.Call;
 import okhttp3.Response;
 
+/**
+ * Created by zmj on 2018/6/14.
+ */
 public class MovieCollectionActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private List<MovieCollection> movies;
