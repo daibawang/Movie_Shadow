@@ -24,6 +24,7 @@ public class MovieCommentAdapter extends RecyclerView.Adapter<MovieCommentAdapte
     private Context context;
     private LayoutInflater mInfalter;
     private List<Comments> commentList;
+    private  int s;
 
     public MovieCommentAdapter(Context context, List<Comments> commentList) {
         this.context = context;
@@ -45,10 +46,38 @@ public class MovieCommentAdapter extends RecyclerView.Adapter<MovieCommentAdapte
         holder.comment_name.setText(comment.getCa());
         Log.i("zzzzcomment.getCr()zzzz", "onBindViewHolder: "+comment.getCr());
         holder.comment_score.setText(comment.getCr()+"分");
-        int s = R.drawable.plstar1;
-//        holder.comment_star.setImageDrawable(context.getResources().getDrawable(R.drawable.plstar1));
+        int score=comment.getCr();
+            switch (score){
+                case 0:s = R.drawable.plstar0;
+                    break;
+                case 1:s=R.drawable.plstar1;
+                    break;
+                case 2:s=R.drawable.plstar2;
+                    break;
+                case 3:s=R.drawable.plstar3;
+                    break;
+                case 4:s=R.drawable.plstar4;
+                    break;
+                case 5:s=R.drawable.plstar5;
+                    break;
+                case 6:s=R.drawable.plstar6;
+                    break;
+                case 7:s=R.drawable.plstar7;
+                    break;
+                case 8:s=R.drawable.plstar8;
+                    break;
+                case 9:s=R.drawable.plstar9;
+                    break;
+                case 10:s=R.drawable.plstar10;
+                    break;
+            }
+           holder.comment_star.setImageDrawable(context.getResources().getDrawable(s));
         holder.time.setText(comment.getCal());
-
+        if(comment.isHot()){
+            holder.com_ishot.setText("热评");
+        }else {
+            holder.com_ishot.setText("");
+        }
     }
 
     @Override
